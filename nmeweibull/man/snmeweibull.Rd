@@ -9,22 +9,35 @@ snmeweibull(x, alpha, beta, lambda, log = FALSE)
 \arguments{
 \item{x}{Numeric vector of quantiles.}
 
-\item{alpha}{Additional parameter of the NME-Weibull distribution.}
+\item{alpha}{Additional parameter of the NME-X family (\eqn{\alpha > 0}).
+The distribution tends to the Weibull distribution as
+\eqn{\alpha \to \infty}.}
 
-\item{beta}{Shape parameter of the baseline Weibull distribution.}
+\item{beta}{Shape parameter of the baseline Weibull distribution
+(\eqn{\beta > 0}).}
 
-\item{lambda}{Scale/rate parameter of the baseline Weibull distribution.}
+\item{lambda}{Rate parameter of the baseline Weibull distribution
+(\eqn{\lambda > 0}), so that the baseline CDF is
+\eqn{G(x) = 1 - e^{-\lambda x^\beta}}.}
 
-\item{log}{Logical; if TRUE, probabilities are returned on the log scale.}
+\item{log}{Logical; if \code{TRUE}, the log-survival is returned.}
 }
 \value{
-A numeric vector of survival probabilities.
+A numeric vector of survival probabilities of the same length as
+\code{x}. The survival function equals one for \code{x <= 0}.
 }
 \description{
-Computes the survival function of the New Modified Exponential-Weibull
-distribution.
+Computes the survival function of the NME-Weibull distribution,
+\deqn{S(x) = P(X > x) = \frac{\alpha^2 e^{-\lambda x^\beta}}{(\alpha + 1 -
+  e^{-\lambda x^\beta})^2}, \quad x \ge 0.}
 }
 \examples{
-snmeweibull(x = 1, alpha = 1, beta = 1, lambda = 1)
-snmeweibull(x = c(0, 0.5, 1, 2), alpha = 1, beta = 2, lambda = 0.5)
+snmeweibull(c(0, 0.5, 1, 2), alpha = 1, beta = 2, lambda = 0.5)
+
+# S(x) = 1 - F(x)
+x <- c(0.5, 1, 2)
+all.equal(snmeweibull(x, 1, 2, 0.5), 1 - pnmeweibull(x, 1, 2, 0.5))
+}
+\seealso{
+\code{\link[=pnmeweibull]{pnmeweibull()}}, \code{\link[=hnmeweibull]{hnmeweibull()}}.
 }

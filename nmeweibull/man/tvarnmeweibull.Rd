@@ -14,26 +14,48 @@ tvarnmeweibull(
 )
 }
 \arguments{
-\item{p}{Numeric vector of probability levels.}
+\item{p}{Numeric vector of probability levels, strictly between 0 and 1.}
 
-\item{alpha}{Additional parameter of the NME-Weibull distribution.}
+\item{alpha}{Additional parameter of the NME-X family (\eqn{\alpha > 0}).
+The distribution tends to the Weibull distribution as
+\eqn{\alpha \to \infty}.}
 
-\item{beta}{Shape parameter of the baseline Weibull distribution.}
+\item{beta}{Shape parameter of the baseline Weibull distribution
+(\eqn{\beta > 0}).}
 
-\item{lambda}{Scale/rate parameter of the baseline Weibull distribution.}
+\item{lambda}{Rate parameter of the baseline Weibull distribution
+(\eqn{\lambda > 0}), so that the baseline CDF is
+\eqn{G(x) = 1 - e^{-\lambda x^\beta}}.}
 
-\item{rel.tol}{Relative accuracy requested in numerical integration.}
+\item{rel.tol}{Relative accuracy requested from \code{\link[stats:integrate]{stats::integrate()}}.}
 
-\item{subdivisions}{Maximum number of subintervals used in numerical integration.}
+\item{subdivisions}{Maximum number of subintervals used by
+\code{\link[stats:integrate]{stats::integrate()}}.}
 }
 \value{
-A numeric vector of TVaR values.
+A numeric vector of TVaR values of the same length as \code{p}. A
+warning is issued if the numerical integration does not report success.
 }
 \description{
-Computes the Tail Value-at-Risk (TVaR) of the New Modified
-Exponential-Weibull distribution at a given probability level.
+Computes the Tail Value-at-Risk of the NME-Weibull distribution at
+probability level \eqn{p},
+\deqn{\mathrm{TVaR}_p(X) = \frac{1}{1 - p}\int_p^1 Q(u)\,du =
+  E[X \mid X > \mathrm{VaR}_p(X)],}
+i.e. the mean of the longest \eqn{100(1 - p)} percent of survival times.
+}
+\details{
+The integral is finite because the NME-Weibull survival function
+is bounded by the Weibull survival function \eqn{e^{-\lambda x^\beta}}.
+Because \eqn{Q(u)} is unbounded as \eqn{u \to 1}, the integral is
+evaluated with \code{\link[stats:integrate]{stats::integrate()}} after the substitution
+\eqn{1 - u = (1 - p)e^{-t}}, which turns it into
+\eqn{\int_0^\infty Q(1 - (1 - p)e^{-t})\,e^{-t}\,dt} with a smooth,
+exponentially decaying integrand. TVaR is always at least
+\eqn{\mathrm{VaR}_p}.
 }
 \examples{
-tvarnmeweibull(p = 0.95, alpha = 1, beta = 2, lambda = 0.5)
-tvarnmeweibull(p = c(0.90, 0.95, 0.99), alpha = 1, beta = 2, lambda = 0.5)
+tvarnmeweibull(c(0.90, 0.95, 0.99), alpha = 1, beta = 2, lambda = 0.5)
+}
+\seealso{
+\code{\link[=varnmeweibull]{varnmeweibull()}}, \code{\link[=rvarnmeweibull]{rvarnmeweibull()}}.
 }

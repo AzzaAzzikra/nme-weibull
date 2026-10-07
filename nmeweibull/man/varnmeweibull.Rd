@@ -4,29 +4,35 @@
 \alias{varnmeweibull}
 \title{Value-at-Risk of the NME-Weibull Distribution}
 \usage{
-varnmeweibull(p, alpha, beta, lambda, lower.tail = TRUE, log.p = FALSE)
+varnmeweibull(p, alpha, beta, lambda)
 }
 \arguments{
-\item{p}{Numeric vector of probability levels.}
+\item{p}{Numeric vector of probability levels, strictly between 0 and 1.}
 
-\item{alpha}{Additional parameter of the NME-Weibull distribution.}
+\item{alpha}{Additional parameter of the NME-X family (\eqn{\alpha > 0}).
+The distribution tends to the Weibull distribution as
+\eqn{\alpha \to \infty}.}
 
-\item{beta}{Shape parameter of the baseline Weibull distribution.}
+\item{beta}{Shape parameter of the baseline Weibull distribution
+(\eqn{\beta > 0}).}
 
-\item{lambda}{Scale/rate parameter of the baseline Weibull distribution.}
-
-\item{lower.tail}{Logical; if TRUE, probabilities are P(X <= x), otherwise P(X > x).}
-
-\item{log.p}{Logical; if TRUE, probabilities are given on the log scale.}
+\item{lambda}{Rate parameter of the baseline Weibull distribution
+(\eqn{\lambda > 0}), so that the baseline CDF is
+\eqn{G(x) = 1 - e^{-\lambda x^\beta}}.}
 }
 \value{
-A numeric vector of VaR values.
+A numeric vector of VaR values of the same length as \code{p}.
 }
 \description{
-Computes the Value-at-Risk (VaR) of the New Modified Exponential-Weibull
-distribution at a given probability level.
+Computes the Value-at-Risk of the NME-Weibull distribution at probability
+level \eqn{p},
+\deqn{\mathrm{VaR}_p(X) = \inf\{x : F(x) \ge p\} = Q(p).}
+For survival-time data, \eqn{\mathrm{VaR}_p} is the time not exceeded by
+\eqn{100p} percent of subjects; \eqn{\mathrm{VaR}_{0.5}} is the median.
 }
 \examples{
-varnmeweibull(p = 0.95, alpha = 1, beta = 2, lambda = 0.5)
-varnmeweibull(p = c(0.90, 0.95, 0.99), alpha = 1, beta = 2, lambda = 0.5)
+varnmeweibull(c(0.90, 0.95, 0.99), alpha = 1, beta = 2, lambda = 0.5)
+}
+\seealso{
+\code{\link[=tvarnmeweibull]{tvarnmeweibull()}}, \code{\link[=rvarnmeweibull]{rvarnmeweibull()}}, \code{\link[=qnmeweibull]{qnmeweibull()}}.
 }
