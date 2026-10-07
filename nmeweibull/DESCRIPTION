@@ -1,0 +1,13 @@
+Package: nmeweibull
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person("Tan", "Azza Nuro Azzikra", , "222212894@stis.ac.id", role = c("aut", "cre"))
+Description: Provides functions for the New Modified Exponential-Weibull distribution, including density, distribution, survival, hazard, quantile, random generation, parameter estimation, and risk measures.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
