@@ -9,24 +9,41 @@ pnmeweibull(q, alpha, beta, lambda, lower.tail = TRUE, log.p = FALSE)
 \arguments{
 \item{q}{Numeric vector of quantiles.}
 
-\item{alpha}{Additional parameter of the NME-Weibull distribution.}
+\item{alpha}{Additional parameter of the NME-X family (\eqn{\alpha > 0}).
+The distribution tends to the Weibull distribution as
+\eqn{\alpha \to \infty}.}
 
-\item{beta}{Shape parameter of the baseline Weibull distribution.}
+\item{beta}{Shape parameter of the baseline Weibull distribution
+(\eqn{\beta > 0}).}
 
-\item{lambda}{Scale/rate parameter of the baseline Weibull distribution.}
+\item{lambda}{Rate parameter of the baseline Weibull distribution
+(\eqn{\lambda > 0}), so that the baseline CDF is
+\eqn{G(x) = 1 - e^{-\lambda x^\beta}}.}
 
-\item{lower.tail}{Logical; if TRUE, probabilities are P(X <= q), otherwise P(X > q).}
+\item{lower.tail}{Logical; if \code{TRUE} (default), probabilities are
+\eqn{P(X \le q)}, otherwise \eqn{P(X > q)}.}
 
-\item{log.p}{Logical; if TRUE, probabilities are returned on the log scale.}
+\item{log.p}{Logical; if \code{TRUE}, probabilities are returned on the log
+scale.}
 }
 \value{
-A numeric vector of cumulative probabilities.
+A numeric vector of probabilities of the same length as \code{q}.
 }
 \description{
-Computes the cumulative distribution function of the New Modified
-Exponential-Weibull distribution.
+Computes the cumulative distribution function (CDF) of the NME-Weibull
+distribution,
+\deqn{F(x) = 1 - \frac{\alpha^2 e^{-\lambda x^\beta}}{(\alpha + 1 -
+  e^{-\lambda x^\beta})^2}, \quad x \ge 0.}
+}
+\details{
+The upper tail (\code{lower.tail = FALSE}) is computed directly from
+the survival function rather than as \code{1 - F(q)}, so small tail
+probabilities keep full relative accuracy.
 }
 \examples{
-pnmeweibull(q = 1, alpha = 1, beta = 1, lambda = 1)
-pnmeweibull(q = c(0, 0.5, 1, 2), alpha = 1, beta = 2, lambda = 0.5)
+pnmeweibull(c(0, 0.5, 1, 2), alpha = 1, beta = 2, lambda = 0.5)
+pnmeweibull(5, alpha = 1, beta = 2, lambda = 0.5, lower.tail = FALSE)
+}
+\seealso{
+\code{\link[=dnmeweibull]{dnmeweibull()}}, \code{\link[=snmeweibull]{snmeweibull()}}, \code{\link[=qnmeweibull]{qnmeweibull()}}.
 }

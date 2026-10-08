@@ -7,26 +7,50 @@
 qnmeweibull(p, alpha, beta, lambda, lower.tail = TRUE, log.p = FALSE)
 }
 \arguments{
-\item{p}{Numeric vector of probabilities.}
+\item{p}{Numeric vector of probabilities in \eqn{[0, 1]}.}
 
-\item{alpha}{Additional parameter of the NME-Weibull distribution.}
+\item{alpha}{Additional parameter of the NME-X family (\eqn{\alpha > 0}).
+The distribution tends to the Weibull distribution as
+\eqn{\alpha \to \infty}.}
 
-\item{beta}{Shape parameter of the baseline Weibull distribution.}
+\item{beta}{Shape parameter of the baseline Weibull distribution
+(\eqn{\beta > 0}).}
 
-\item{lambda}{Scale/rate parameter of the baseline Weibull distribution.}
+\item{lambda}{Rate parameter of the baseline Weibull distribution
+(\eqn{\lambda > 0}), so that the baseline CDF is
+\eqn{G(x) = 1 - e^{-\lambda x^\beta}}.}
 
-\item{lower.tail}{Logical; if TRUE, probabilities are P(X <= x), otherwise P(X > x).}
+\item{lower.tail}{Logical; if \code{TRUE} (default), probabilities are
+\eqn{P(X \le x)}, otherwise \eqn{P(X > x)}.}
 
-\item{log.p}{Logical; if TRUE, probabilities are given on the log scale.}
+\item{log.p}{Logical; if \code{TRUE}, probabilities \code{p} are given as
+\code{log(p)}.}
 }
 \value{
-A numeric vector of quantiles.
+A numeric vector of quantiles of the same length as \code{p}. The
+quantile is \code{0} for a lower-tail probability of \code{0} and \code{Inf} for a
+lower-tail probability of \code{1}.
 }
 \description{
-Computes the quantile function of the New Modified Exponential-Weibull
-distribution.
+Computes the quantile function of the NME-Weibull distribution in closed
+form. With \eqn{s = 1 - p},
+\deqn{w = \frac{2\sqrt{s}(\alpha + 1)}{\alpha + \sqrt{\alpha^2 +
+  4s(\alpha + 1)}}, \qquad Q(p) = \left[\frac{-2 \ln w}{\lambda}
+  \right]^{1/\beta}.}
+}
+\details{
+The closed form follows from solving \eqn{S(x) = s} for
+\eqn{w = \sqrt{e^{-\lambda x^\beta}}}, which gives the quadratic
+equation \eqn{\sqrt{s}\,w^2 + \alpha w - \sqrt{s}(\alpha + 1) = 0}.
+The positive root is written in rationalised form to avoid
+cancellation when \eqn{s} is small. No iteration is needed.
 }
 \examples{
-qnmeweibull(p = 0.5, alpha = 1, beta = 1, lambda = 1)
-qnmeweibull(p = c(0.25, 0.5, 0.75), alpha = 1, beta = 2, lambda = 0.5)
+qnmeweibull(c(0.25, 0.5, 0.75), alpha = 1, beta = 2, lambda = 0.5)
+
+# Q(F(x)) = x
+qnmeweibull(pnmeweibull(1.3, 1, 2, 0.5), 1, 2, 0.5)
+}
+\seealso{
+\code{\link[=pnmeweibull]{pnmeweibull()}}, \code{\link[=rnmeweibull]{rnmeweibull()}}, \code{\link[=varnmeweibull]{varnmeweibull()}}.
 }

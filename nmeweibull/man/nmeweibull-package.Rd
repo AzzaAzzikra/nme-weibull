@@ -4,12 +4,32 @@
 \name{nmeweibull-package}
 \alias{nmeweibull}
 \alias{nmeweibull-package}
-\title{nmeweibull: New Modified Exponential-Weibull Distribution}
+\title{nmeweibull: The New Modified Exponential-Weibull Distribution}
 \description{
-The nmeweibull package provides functions for the New Modified
-Exponential-Weibull distribution. The package includes functions
-for density, cumulative distribution, survival, hazard, quantile,
-random generation, parameter estimation, and risk measures.
+Tools for modelling positive survival-time data with the New Modified
+Exponential-Weibull (NME-Weibull) distribution of Alshanbari et al.
+(2023). The CDF is
+\deqn{F(x) = 1 - \frac{\alpha^2 e^{-\lambda x^\beta}}{(\alpha + 1 -
+  e^{-\lambda x^\beta})^2}, \quad x \ge 0,}
+with \eqn{\alpha, \beta, \lambda > 0}.
+}
+\details{
+The package provides
+\itemize{
+\item distribution functions: \code{\link[=dnmeweibull]{dnmeweibull()}}, \code{\link[=pnmeweibull]{pnmeweibull()}},
+\code{\link[=snmeweibull]{snmeweibull()}}, \code{\link[=hnmeweibull]{hnmeweibull()}}, \code{\link[=qnmeweibull]{qnmeweibull()}}, and
+\code{\link[=rnmeweibull]{rnmeweibull()}};
+\item maximum likelihood estimation for complete data:
+\code{\link[=fitnmeweibull]{fitnmeweibull()}};
+\item quantile-based risk measures: \code{\link[=varnmeweibull]{varnmeweibull()}},
+\code{\link[=tvarnmeweibull]{tvarnmeweibull()}}, and \code{\link[=rvarnmeweibull]{rvarnmeweibull()}}.
+}
+}
+\references{
+Alshanbari, H. M., Odhah, O. H., Ahmad, Z., Khan, F., and
+El-Bagoury, A. A.-A. H. (2023). A new probability distribution: Model,
+theory and analyzing the recovery time data. \emph{Axioms}, 12(5), 477.
+\doi{10.3390/axioms12050477}
 }
 \author{
 \strong{Maintainer}: Tan Azza Nuro Azzikra \email{222212894@stis.ac.id}

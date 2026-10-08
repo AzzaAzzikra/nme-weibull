@@ -9,22 +9,48 @@ hnmeweibull(x, alpha, beta, lambda, log = FALSE)
 \arguments{
 \item{x}{Numeric vector of quantiles.}
 
-\item{alpha}{Additional parameter of the NME-Weibull distribution.}
+\item{alpha}{Additional parameter of the NME-X family (\eqn{\alpha > 0}).
+The distribution tends to the Weibull distribution as
+\eqn{\alpha \to \infty}.}
 
-\item{beta}{Shape parameter of the baseline Weibull distribution.}
+\item{beta}{Shape parameter of the baseline Weibull distribution
+(\eqn{\beta > 0}).}
 
-\item{lambda}{Scale/rate parameter of the baseline Weibull distribution.}
+\item{lambda}{Rate parameter of the baseline Weibull distribution
+(\eqn{\lambda > 0}), so that the baseline CDF is
+\eqn{G(x) = 1 - e^{-\lambda x^\beta}}.}
 
-\item{log}{Logical; if TRUE, hazard values are returned on the log scale.}
+\item{log}{Logical; if \code{TRUE}, the log-hazard is returned.}
 }
 \value{
-A numeric vector of hazard values.
+A numeric vector of hazard values of the same length as \code{x}. The
+hazard is zero for \code{x < 0}. At \code{x = 0} and \code{x = Inf} the limits of the
+hazard function are returned: for \code{x = 0} these are \code{Inf},
+\eqn{\lambda(\alpha + 2)/\alpha}, or \code{0}, and for \code{x = Inf} they are
+\code{0}, \eqn{\lambda}, or \code{Inf}, for \eqn{\beta < 1}, \eqn{\beta = 1}, or
+\eqn{\beta > 1}, respectively.
 }
 \description{
-Computes the hazard function of the New Modified Exponential-Weibull
-distribution.
+Computes the hazard function of the NME-Weibull distribution,
+\deqn{h(x) = \frac{f(x)}{S(x)} = \beta \lambda x^{\beta - 1}
+  \frac{\alpha + 1 + e^{-\lambda x^\beta}}{\alpha + 1 -
+  e^{-\lambda x^\beta}}, \quad x \ge 0.}
+}
+\details{
+The hazard is the Weibull hazard \eqn{\beta \lambda x^{\beta -
+  1}} multiplied by a factor that decreases from \eqn{(\alpha +
+  2)/\alpha} to one. Depending on the parameters, the hazard can be
+decreasing, increasing, unimodal, or modified unimodal.
 }
 \examples{
-hnmeweibull(x = 1, alpha = 1, beta = 1, lambda = 1)
-hnmeweibull(x = c(0.5, 1, 2), alpha = 1, beta = 2, lambda = 0.5)
+x <- seq(0.1, 3, by = 0.1)
+plot(x, hnmeweibull(x, alpha = 0.05, beta = 2, lambda = 1), type = "l",
+     ylab = "h(x)")
+
+# h(x) = f(x) / S(x)
+all.equal(hnmeweibull(1, 1, 2, 0.5),
+          dnmeweibull(1, 1, 2, 0.5) / snmeweibull(1, 1, 2, 0.5))
+}
+\seealso{
+\code{\link[=dnmeweibull]{dnmeweibull()}}, \code{\link[=snmeweibull]{snmeweibull()}}.
 }

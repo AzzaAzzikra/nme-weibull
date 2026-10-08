@@ -2,42 +2,102 @@
 % Please edit documentation in R/estimation.R
 \name{fitnmeweibull}
 \alias{fitnmeweibull}
-\title{Fit the NME-Weibull Distribution by Maximum Likelihood Estimation}
+\title{Fit the NME-Weibull Distribution by Maximum Likelihood}
 \usage{
 fitnmeweibull(
   x,
   start = NULL,
-  lower = c(alpha = 1e-08, beta = 1e-08, lambda = 1e-08),
-  upper = c(alpha = 10000, beta = 10000, lambda = 10000),
+  lower = c(alpha = 1e-08, beta = 1e-08, lambda = 0),
+  upper = c(alpha = 10000, beta = 10000, lambda = Inf),
   hessian = FALSE,
   control = list()
 )
 }
 \arguments{
-\item{x}{Numeric vector of positive observations.}
+\item{x}{Numeric vector of positive observations. \code{NA}, \code{NaN}, and
+infinite values are removed before fitting.}
 
-\item{start}{Optional named numeric vector of starting values with names
-alpha, beta, and lambda.}
+\item{start}{Optional named numeric vector with elements \code{alpha}, \code{beta},
+and \code{lambda}. When supplied, it is used as an additional starting point
+on top of the 75 automatic ones.}
 
-\item{lower}{Named numeric vector of lower bounds for alpha, beta, and lambda.}
+\item{lower, upper}{Named numeric vectors with elements \code{alpha}, \code{beta},
+and \code{lambda} giving the parameter space searched. The default upper
+bound of \code{alpha} is \eqn{10^4}; because the Weibull distribution is the
+limit of the NME-Weibull distribution as \eqn{\alpha \to \infty}, an
+estimate of \code{alpha} at this bound indicates that the data cannot be
+distinguished from a Weibull sample. \code{lambda} is unbounded by default so
+that data measured in any unit can be fitted.}
 
-\item{upper}{Named numeric vector of upper bounds for alpha, beta, and lambda.}
+\item{hessian}{Logical; if \code{TRUE}, the Hessian of the negative
+log-likelihood with respect to
+\eqn{(\ln\alpha, \ln\beta, \ln\lambda)} is computed at the estimate.}
 
-\item{hessian}{Logical; if TRUE, the Hessian matrix is computed at the final
-estimate.}
-
-\item{control}{A list of control parameters passed to \code{\link[stats:optim]{stats::optim()}}.}
+\item{control}{A list of control parameters passed to \code{\link[stats:optim]{stats::optim()}}.
+The defaults are \code{maxit = 5000} and \code{reltol = 1e-10}.}
 }
 \value{
-A list containing parameter estimates, log-likelihood, AIC, BIC,
-convergence code, optimization message, and the full optim object.
+An object of class \code{"fitnmeweibull"}, a list with components
+\describe{
+\item{estimate}{Named vector of estimates of \code{alpha}, \code{beta}, and
+\code{lambda}.}
+\item{logLik}{Maximised log-likelihood.}
+\item{AIC, BIC}{Akaike and Bayesian information criteria with
+\eqn{k = 3} parameters.}
+\item{convergence}{Convergence code of the best run reported by
+\code{\link[stats:optim]{stats::optim()}}; \code{0} means the algorithm stopped normally.}
+\item{message}{Message returned by \code{\link[stats:optim]{stats::optim()}}, or \code{NULL}.}
+\item{n}{Number of observations used.}
+\item{boundary}{Logical; \code{TRUE} if any estimate lies within 1\\% of a
+finite bound in \code{lower} or \code{upper}.}
+\item{n_starts}{Number of starting points that produced a finite
+log-likelihood.}
+\item{hessian}{Hessian matrix if \code{hessian = TRUE}, otherwise
+\code{NULL}.}
+\item{optim}{The full \code{\link[stats:optim]{stats::optim()}} result of the best run, on the
+internal scale described in Details.}
+}
 }
 \description{
-Estimates the parameters of the New Modified Exponential-Weibull
-distribution using maximum likelihood estimation.
+Estimates the parameters \eqn{\alpha}, \eqn{\beta}, and \eqn{\lambda} of
+the NME-Weibull distribution from complete (uncensored) data by maximum
+likelihood, and reports the maximised log-likelihood, AIC, BIC, and the
+convergence code.
+}
+\details{
+The log-likelihood has no closed-form maximiser, so it is
+maximised numerically. The parameters are estimated on the log scale,
+\eqn{\phi = (\ln\alpha, \ln\beta, \ln\lambda)}, which keeps them
+positive; by the invariance property of maximum likelihood,
+\eqn{\exp(\hat{\phi})} is the estimate of \eqn{\theta}. From each of 75
+starting points (see Equation (41) of the thesis) the Nelder-Mead
+algorithm is run first and its result is refined with BFGS, both via
+\code{\link[stats:optim]{stats::optim()}}. The run with the smallest negative log-likelihood is
+kept.
+
+Internally the data are divided by their geometric mean \eqn{m} and the
+rate is written as \eqn{\lambda = \lambda^* m^{-\beta}}. This changes
+neither the likelihood nor the estimates, but it keeps the optimisation
+well conditioned for data in large units such as days or currency.
+All reported quantities are on the original scale of \code{x}.
+
+A convergence code of \code{0} only means that the algorithm stopped
+normally. Check \code{boundary} as well: an estimate of \code{alpha} at its upper
+bound means the fitted model is practically a Weibull distribution.
 }
 \examples{
 set.seed(123)
-x <- rnmeweibull(n = 100, alpha = 1, beta = 2, lambda = 0.5)
-fitnmeweibull(x)
+x <- rnmeweibull(200, alpha = 1, beta = 2, lambda = 0.5)
+fit <- fitnmeweibull(x)
+fit
+fit$estimate
+
+# Fitted parameters can be passed to the other functions
+est <- fit$estimate
+varnmeweibull(0.95, est["alpha"], est["beta"], est["lambda"])
+}
+\seealso{
+\code{\link[=dnmeweibull]{dnmeweibull()}} for the density and \code{\link[=varnmeweibull]{varnmeweibull()}},
+\code{\link[=tvarnmeweibull]{tvarnmeweibull()}}, and \code{\link[=rvarnmeweibull]{rvarnmeweibull()}} for risk measures based on
+the fitted parameters.
 }

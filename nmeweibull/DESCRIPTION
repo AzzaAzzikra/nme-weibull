@@ -1,13 +1,22 @@
 Package: nmeweibull
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
+Title: The New Modified Exponential-Weibull Distribution for Survival Time
+Version: 0.1.0
+Authors@R:
     person("Tan", "Azza Nuro Azzikra", , "222212894@stis.ac.id", role = c("aut", "cre"))
-Description: Provides functions for the New Modified Exponential-Weibull distribution, including density, distribution, survival, hazard, quantile, random generation, parameter estimation, and risk measures.
+Description: Density, distribution, survival, hazard, quantile, and random
+    generation functions for the New Modified Exponential-Weibull
+    (NME-Weibull) distribution of Alshanbari et al. (2023)
+    <doi:10.3390/axioms12050477>, together with maximum likelihood
+    estimation for complete survival-time data and the quantile-based risk
+    measures Value-at-Risk, Tail Value-at-Risk, and Range Value-at-Risk.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
-Suggests: 
+RoxygenNote: 7.3.1
+Imports:
+    stats,
+    utils
+Suggests:
+    survival,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

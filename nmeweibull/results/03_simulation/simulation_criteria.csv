@@ -1,0 +1,10 @@
+"scenario","parameter","abs_bias_decreasing","mse_decreasing","abs_median_bias_decreasing","min_convergence_rate","boundary_rate_non_increasing"
+"S1","alpha",TRUE,TRUE,TRUE,1,TRUE
+"S2","alpha",TRUE,TRUE,TRUE,1,TRUE
+"S3","alpha",TRUE,TRUE,TRUE,1,TRUE
+"S1","beta",TRUE,TRUE,TRUE,1,TRUE
+"S2","beta",FALSE,TRUE,FALSE,1,TRUE
+"S3","beta",TRUE,TRUE,FALSE,1,TRUE
+"S1","lambda",TRUE,TRUE,TRUE,1,TRUE
+"S2","lambda",TRUE,TRUE,TRUE,1,TRUE
+"S3","lambda",TRUE,TRUE,TRUE,1,TRUE

@@ -15,30 +15,45 @@ rvarnmeweibull(
 )
 }
 \arguments{
-\item{p_lower}{Numeric vector of lower probability levels.}
+\item{p_lower}{Numeric vector of lower probability levels \eqn{p_1}.}
 
-\item{p_upper}{Numeric vector of upper probability levels.}
+\item{p_upper}{Numeric vector of upper probability levels \eqn{p_2}.
+\code{p_lower} and \code{p_upper} must have the same length, or one of them must
+have length one.}
 
-\item{alpha}{Additional parameter of the NME-Weibull distribution.}
+\item{alpha}{Additional parameter of the NME-X family (\eqn{\alpha > 0}).
+The distribution tends to the Weibull distribution as
+\eqn{\alpha \to \infty}.}
 
-\item{beta}{Shape parameter of the baseline Weibull distribution.}
+\item{beta}{Shape parameter of the baseline Weibull distribution
+(\eqn{\beta > 0}).}
 
-\item{lambda}{Scale/rate parameter of the baseline Weibull distribution.}
+\item{lambda}{Rate parameter of the baseline Weibull distribution
+(\eqn{\lambda > 0}), so that the baseline CDF is
+\eqn{G(x) = 1 - e^{-\lambda x^\beta}}.}
 
-\item{rel.tol}{Relative accuracy requested in numerical integration.}
+\item{rel.tol}{Relative accuracy requested from \code{\link[stats:integrate]{stats::integrate()}}.}
 
-\item{subdivisions}{Maximum number of subintervals used in numerical integration.}
+\item{subdivisions}{Maximum number of subintervals used by
+\code{\link[stats:integrate]{stats::integrate()}}.}
 }
 \value{
-A numeric vector of RVaR values.
+A numeric vector of RVaR values. A warning is issued if the
+numerical integration does not report success.
 }
 \description{
-Computes the Range Value-at-Risk (RVaR) of the New Modified
-Exponential-Weibull distribution over a probability interval.
+Computes the Range Value-at-Risk of the NME-Weibull distribution over the
+probability interval \eqn{(p_1, p_2)},
+\deqn{\mathrm{RVaR}_{p_1, p_2}(X) = \frac{1}{p_2 - p_1}
+  \int_{p_1}^{p_2} Q(u)\,du,}
+the mean of the quantiles between the two levels. RVaR lies between
+\eqn{\mathrm{VaR}_{p_1}} and \eqn{\mathrm{VaR}_{p_2}}, and is less
+sensitive to extreme values than TVaR.
 }
 \examples{
-rvarnmeweibull(p_lower = 0.90, p_upper = 0.95,
-               alpha = 1, beta = 2, lambda = 0.5)
 rvarnmeweibull(p_lower = c(0.90, 0.95), p_upper = c(0.95, 0.99),
                alpha = 1, beta = 2, lambda = 0.5)
+}
+\seealso{
+\code{\link[=varnmeweibull]{varnmeweibull()}}, \code{\link[=tvarnmeweibull]{tvarnmeweibull()}}.
 }

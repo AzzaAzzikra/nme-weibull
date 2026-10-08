@@ -2,29 +2,59 @@
 % Please edit documentation in R/distribution.R
 \name{dnmeweibull}
 \alias{dnmeweibull}
-\title{Density Function of the NME-Weibull Distribution}
+\title{Density of the NME-Weibull Distribution}
 \usage{
 dnmeweibull(x, alpha, beta, lambda, log = FALSE)
 }
 \arguments{
 \item{x}{Numeric vector of quantiles.}
 
-\item{alpha}{Additional parameter of the NME-Weibull distribution.}
+\item{alpha}{Additional parameter of the NME-X family (\eqn{\alpha > 0}).
+The distribution tends to the Weibull distribution as
+\eqn{\alpha \to \infty}.}
 
-\item{beta}{Shape parameter of the baseline Weibull distribution.}
+\item{beta}{Shape parameter of the baseline Weibull distribution
+(\eqn{\beta > 0}).}
 
-\item{lambda}{Scale/rate parameter of the baseline Weibull distribution.}
+\item{lambda}{Rate parameter of the baseline Weibull distribution
+(\eqn{\lambda > 0}), so that the baseline CDF is
+\eqn{G(x) = 1 - e^{-\lambda x^\beta}}.}
 
-\item{log}{Logical; if TRUE, probabilities are returned on the log scale.}
+\item{log}{Logical; if \code{TRUE}, the log-density is returned.}
 }
 \value{
-A numeric vector of density values.
+A numeric vector of the same length as \code{x}. The density is zero
+for \code{x < 0}. \code{NA} values in \code{x} are propagated.
 }
 \description{
-Computes the probability density function of the New Modified
-Exponential-Weibull distribution.
+Computes the probability density function (PDF) of the New Modified
+Exponential-Weibull (NME-Weibull) distribution,
+\deqn{f(x) = \frac{\alpha^2 \beta \lambda x^{\beta - 1} e^{-\lambda
+  x^\beta} (\alpha + 1 + e^{-\lambda x^\beta})}{(\alpha + 1 -
+  e^{-\lambda x^\beta})^3}, \quad x \ge 0,}
+with \eqn{\alpha > 0}, shape \eqn{\beta > 0}, and rate
+\eqn{\lambda > 0} (Alshanbari et al., 2023).
+}
+\details{
+The parameterisation of the baseline Weibull distribution is
+related to \code{\link[stats:Weibull]{stats::dweibull()}} through
+\eqn{\lambda = \sigma^{-\beta}}, where \eqn{\sigma} is the \code{scale}
+argument of \code{\link[stats:Weibull]{stats::dweibull()}}.
 }
 \examples{
-dnmeweibull(x = 1, alpha = 1, beta = 1, lambda = 1)
-dnmeweibull(x = c(0.5, 1, 2), alpha = 1, beta = 2, lambda = 0.5)
+dnmeweibull(1, alpha = 1, beta = 2, lambda = 0.5)
+dnmeweibull(c(0.5, 1, 2), alpha = 0.5, beta = 1, lambda = 0.8, log = TRUE)
+
+# The density integrates to one
+integrate(dnmeweibull, 0, Inf, alpha = 1, beta = 2, lambda = 0.5)
+}
+\references{
+Alshanbari, H. M., Odhah, O. H., Ahmad, Z., Khan, F., and
+El-Bagoury, A. A.-A. H. (2023). A new probability distribution: Model,
+theory and analyzing the recovery time data. \emph{Axioms}, 12(5), 477.
+\doi{10.3390/axioms12050477}
+}
+\seealso{
+\code{\link[=pnmeweibull]{pnmeweibull()}}, \code{\link[=snmeweibull]{snmeweibull()}}, \code{\link[=hnmeweibull]{hnmeweibull()}},
+\code{\link[=qnmeweibull]{qnmeweibull()}}, \code{\link[=rnmeweibull]{rnmeweibull()}}.
 }

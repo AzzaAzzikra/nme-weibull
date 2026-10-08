@@ -7,23 +7,37 @@
 rnmeweibull(n, alpha, beta, lambda)
 }
 \arguments{
-\item{n}{Number of observations. If length(n) > 1, the length is taken to be
-the number required.}
+\item{n}{Number of observations. If \code{length(n) > 1}, the length is taken
+to be the number required, as in \code{\link[stats:Normal]{stats::rnorm()}}.}
 
-\item{alpha}{Additional parameter of the NME-Weibull distribution.}
+\item{alpha}{Additional parameter of the NME-X family (\eqn{\alpha > 0}).
+The distribution tends to the Weibull distribution as
+\eqn{\alpha \to \infty}.}
 
-\item{beta}{Shape parameter of the baseline Weibull distribution.}
+\item{beta}{Shape parameter of the baseline Weibull distribution
+(\eqn{\beta > 0}).}
 
-\item{lambda}{Scale/rate parameter of the baseline Weibull distribution.}
+\item{lambda}{Rate parameter of the baseline Weibull distribution
+(\eqn{\lambda > 0}), so that the baseline CDF is
+\eqn{G(x) = 1 - e^{-\lambda x^\beta}}.}
 }
 \value{
-A numeric vector of random observations.
+A numeric vector of \code{n} random observations.
 }
 \description{
-Generates random observations from the New Modified Exponential-Weibull
-distribution using the inverse transform method.
+Generates random observations from the NME-Weibull distribution with the
+inverse transform method, \eqn{X = Q(U)} with
+\eqn{U \sim \mathrm{Uniform}(0, 1)}.
+}
+\details{
+Results are reproducible for a fixed seed set with
+\code{\link[=set.seed]{set.seed()}}.
 }
 \examples{
-rnmeweibull(n = 5, alpha = 1, beta = 1, lambda = 1)
-rnmeweibull(n = 10, alpha = 1, beta = 2, lambda = 0.5)
+set.seed(123)
+x <- rnmeweibull(1000, alpha = 1, beta = 2, lambda = 0.5)
+summary(x)
+}
+\seealso{
+\code{\link[=qnmeweibull]{qnmeweibull()}}.
 }
