@@ -74,19 +74,20 @@ not part of the installed package. Run them from the package root (open
 | `01_distribution_figures.R` | Example values and shapes of the PDF, survival, and hazard functions |
 | `02_validation.R` | Validation rules V1-V9 on 48 parameter combinations |
 | `03_simulation_mle.R` | Monte Carlo simulation of the MLE (3 scenarios x n = 100, 500, 1000, M = 1000) |
-| `04_real_data_application.R` | NME-Weibull versus Weibull on the veteran lung cancer data |
-| `05_additional_data.R` | Supplementary comparison on medical cost and GBSG2 data |
+| `04_survival_hazard_gbsg2.R` | Survival and hazard modelling of the GBSG2 recurrence-free survival times, NME-Weibull versus Weibull |
+| `05_risk_measures_medical_cost.R` | Actuarial application: model comparison and VaR, TVaR, and RVaR of medical costs |
 | `helpers.R` | Shared helper functions used by the scripts |
 
 The data used by the scripts are in `data/`:
 
-- `real_data.csv`: survival times (days) of the 128 patients who died in the
-  Veterans' Administration lung cancer trial (`survival::veteran`,
-  `status == 1`).
-- `medical_cost_charges.csv`: medical costs billed by health insurance (USD),
-  Medical Cost Personal Datasets.
-- `gbsg2_recurrence_free_time.csv`: recurrence-free survival time (days) and
-  status of the German Breast Cancer Study Group 2 trial.
+- `gbsg2_recurrence_free_time.csv`: recurrence-free survival time in days
+  (`time`) and status (`status`: 1 = recurrence or death, 0 = censored) of
+  the 686 patients of the German Breast Cancer Study Group 2 trial. Because
+  `fitnmeweibull()` handles complete data, the script uses the 299 patients
+  with an observed event.
+- `medical_cost_charges.csv`: individual medical costs billed by health
+  insurance for 1,338 policyholders in US dollars (`charges`), Medical Cost
+  Personal Datasets.
 
 ## Reference
 

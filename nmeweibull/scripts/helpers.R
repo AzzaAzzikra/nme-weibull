@@ -219,9 +219,67 @@ risk_measures <- function(x, fit_nme, fit_weibull,
   list(var_tvar = var_tvar, rvar = rvar)
 }
 
+# Nelson-Aalen estimate of the cumulative hazard for complete data:
+# H(t) = sum over event times t_j <= t of d_j / r_j, with d_j events and r_j
+# subjects at risk at t_j.
+nelson_aalen <- function(x) {
+  times <- sort(unique(x))
+  events <- as.numeric(table(factor(x, levels = times)))
+  at_risk <- length(x) - c(0, cumsum(events)[-length(events)])
+  data.frame(time = times, cumulative_hazard = cumsum(events / at_risk))
+}
+
+# Fitted versus Nelson-Aalen cumulative hazard.
+plot_cumulative_hazard <- function(x, fit_nme, fit_weibull, fig_dir,
+                                   unit_label, prefix = "") {
+  a <- unname(fit_nme$estimate["alpha"])
+  b <- unname(fit_nme$estimate["beta"])
+  l <- unname(fit_nme$estimate["lambda"])
+  bw <- unname(fit_weibull$estimate["beta"])
+  lw <- unname(fit_weibull$estimate["lambda"])
+  na <- nelson_aalen(x)
+  # Stop at the second-largest time: the last Nelson-Aalen step (1/1) is not
+  # informative about the fit.
+  grid_x <- seq(min(x) / 2, sort(x, decreasing = TRUE)[2], length.out = 400)
+  h_nme <- -snmeweibull(grid_x, a, b, l, log = TRUE)
+  h_wei <- lw * grid_x^bw
+  keep <- na$time <= max(grid_x)
+
+  open_png(file.path(fig_dir, paste0(prefix, "fitted_cumulative_hazard.png")))
+  graphics::plot(c(0, na$time[keep]), c(0, na$cumulative_hazard[keep]),
+                 type = "s", col = "grey30", xlab = unit_label, ylab = "H(x)",
+                 ylim = range(c(0, na$cumulative_hazard[keep], h_nme, h_wei)))
+  graphics::lines(grid_x, h_nme, col = "#1b6ca8", lwd = 2)
+  graphics::lines(grid_x, h_wei, col = "#d1495b", lwd = 2, lty = 2)
+  graphics::legend("topleft", c("Nelson-Aalen", "NME-Weibull", "Weibull"),
+                   col = c("grey30", "#1b6ca8", "#d1495b"), lwd = c(1, 2, 2),
+                   lty = c(1, 1, 2), bty = "n")
+  grDevices::dev.off()
+
+  invisible(NULL)
+}
+
+# Empirical hazard on intervals for complete data: events in the interval
+# divided by the total time at risk spent in it (occurrence/exposure rate).
+# Intervals with fewer than 10 subjects at risk at their start are dropped.
+interval_hazard <- function(x, breaks) {
+  out <- lapply(seq_len(length(breaks) - 1L), function(j) {
+    lo <- breaks[j]
+    hi <- breaks[j + 1L]
+    at_risk <- sum(x > lo)
+    exposure <- sum(pmin(x[x > lo], hi) - lo)
+    events <- sum(x > lo & x <= hi)
+    data.frame(lower = lo, upper = hi, midpoint = (lo + hi) / 2,
+               at_risk = at_risk, events = events, exposure = exposure,
+               hazard = events / exposure)
+  })
+  out <- do.call(rbind, out)
+  out[out$at_risk >= 10, ]
+}
+
 # Figures comparing the two fitted models with the data.
 plot_fitted_models <- function(x, fit_nme, fit_weibull, fig_dir, unit_label,
-                               prefix = "") {
+                               prefix = "", hazard_breaks = NULL) {
   a <- unname(fit_nme$estimate["alpha"])
   b <- unname(fit_nme$estimate["beta"])
   l <- unname(fit_nme$estimate["lambda"])
@@ -264,12 +322,24 @@ plot_fitted_models <- function(x, fit_nme, fit_weibull, fig_dir, unit_label,
   open_png(file.path(fig_dir, paste0(prefix, "fitted_hazard.png")))
   h_nme <- hnmeweibull(grid_x, a, b, l)
   h_wei <- hweibull_rate(grid_x, bw, lw)
+  empirical <- if (is.null(hazard_breaks)) NULL else
+    interval_hazard(x, hazard_breaks)
   graphics::plot(grid_x, h_nme, type = "l", col = cols["nme"], lwd = 2,
-                 ylim = range(c(h_nme, h_wei), finite = TRUE),
+                 ylim = range(c(h_nme, h_wei, empirical$hazard),
+                              finite = TRUE),
                  xlab = unit_label, ylab = "h(x)", main = "")
   graphics::lines(grid_x, h_wei, col = cols["weibull"], lwd = 2, lty = 2)
-  graphics::legend("topright", c("NME-Weibull", "Weibull"), col = cols,
-                   lwd = 2, lty = c(1, 2), bty = "n")
+  legend_text <- c("NME-Weibull", "Weibull")
+  legend_args <- list(col = cols, lwd = 2, lty = c(1, 2), pch = c(NA, NA))
+  if (!is.null(empirical)) {
+    graphics::points(empirical$midpoint, empirical$hazard, pch = 19,
+                     col = "grey30")
+    legend_text <- c(legend_text, "Empiris per interval")
+    legend_args <- list(col = c(cols, "grey30"), lwd = c(2, 2, NA),
+                        lty = c(1, 2, NA), pch = c(NA, NA, 19))
+  }
+  do.call(graphics::legend, c(list("topleft", legend_text, bty = "n"),
+                              legend_args))
   grDevices::dev.off()
 
   invisible(NULL)
